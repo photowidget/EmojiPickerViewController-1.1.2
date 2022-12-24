@@ -123,7 +123,23 @@ class EmojiTests: XCTestCase {
         }
 
     }
+    
+    func testHasVariations() {
+        
+        XCTContext.runActivity(named: "true") { _ in
+            let emoji = Emoji("👌")
+            emoji.orderedSkinToneEmojis = [Emoji("👌🏼")]
+            XCTAssertTrue(emoji.hasVariations)
+        }
+        
+        XCTContext.runActivity(named: "false") { _ in
+            let emoji = Emoji("😵‍💫")
+            XCTAssertFalse(emoji.hasVariations)
 
+        }
+
+    }
+    
     // MARK: - Testing Emoji.Status
 
     func testInitStatus() throws {

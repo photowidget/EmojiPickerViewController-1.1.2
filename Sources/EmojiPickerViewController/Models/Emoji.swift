@@ -300,5 +300,12 @@ extension Emoji {
         return false
 
     }
+    
+    /**
+     The boolean value indicating whether the emoji has any skintoned emoji.
+     */
+    public var hasVariations: Bool {
+        return !orderedSkinToneEmojis.isEmpty
+    }
 
 }
