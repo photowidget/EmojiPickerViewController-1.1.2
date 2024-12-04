@@ -533,7 +533,31 @@ open class EmojiPickerViewController: UIViewController {
 
     }
 
-
+    private func isExactlyiOS180() -> Bool {
+        if #available(iOS 18.0, *) {
+            let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+            if osVersion.majorVersion == 18 && osVersion.minorVersion == 0 {
+                // 정확히 iOS 18.0
+                return true
+            } else {
+                // iOS 18.0 이상 (18.0 초과)
+                return false
+            }
+        } else {
+            // iOS 18.0 미만
+            return false
+        }
+    }
+    
+    private func isAboveiOS180() -> Bool {
+        if #available(iOS 18.0, *) {
+            // iOS 18.0 이상 (18.0 포함)
+            return true
+        } else {
+            // iOS 18.0 미만
+            return false
+        }
+    }
 }
 
 extension EmojiPickerViewController: UIScrollViewAccessibilityDelegate {
@@ -608,14 +632,18 @@ extension EmojiPickerViewController: UICollectionViewDelegateFlowLayout {
      This implementation is to adopt size category changes.
      */
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-
-        guard let header = diffableDataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section)) as? LabelCollectionHeaderView else {
+        
+        if !isAboveiOS180() {
+            guard let header = diffableDataSource.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: section)) as? LabelCollectionHeaderView else {
+                return CGSize(width: collectionView.bounds.width, height: 50) // Default size
+            }
+            
+            let sizeForAdoptingTraitChanges = header.systemLayoutSizeFitting(.init(width: collectionView.bounds.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+            
+            return sizeForAdoptingTraitChanges
+        } else {
             return CGSize(width: collectionView.bounds.width, height: 50) // Default size
         }
-
-        let sizeForAdoptingTraitChanges = header.systemLayoutSizeFitting(.init(width: collectionView.bounds.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-
-        return sizeForAdoptingTraitChanges
     }
 
     /*
